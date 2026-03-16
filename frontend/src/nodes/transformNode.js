@@ -41,6 +41,7 @@ export const TransformNode = ({ id, data }) => {
 
   return (
     <NodeTemplate
+      id={id}
       title="Transform"
       icon="⟳"
       category="Data"

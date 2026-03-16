@@ -1,6 +1,6 @@
 // src/nodes/llmNode.js
-import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+import { useState, useEffect } from 'react';
+import { Position, useUpdateNodeInternals } from 'reactflow';
 import { NodeTemplate } from './nodeTemplate';
 import { useStore } from '../store';
 import { cn, extractVariables, useStaleEdgeRemoval } from '../lib/utils';
@@ -20,32 +20,53 @@ export const LLMNode = ({ id, data }) => {
   const sel      = provider ? PROVIDERS[provider] : null;
   const color    = sel?.color || '#6366f1';
 
-  const [model,        setModel]        = useState(sel?.models[0] || '');
-  const [customModel,  setCustomModel]  = useState('');
-  const [temperature,  setTemperature]  = useState(0.7);
-  const [maxTokens,    setMaxTokens]    = useState(1024);
-  const [systemPrompt, setSystemPrompt] = useState('');
-  const [userQuery,    setUserQuery]    = useState('');
-  const [showParams,   setShowParams]   = useState(false);
+  const [model,       setModel]       = useState(sel?.models[0] || '');
+  const [customModel, setCustomModel] = useState('');
+  const [temperature, setTemperature] = useState(0.7);
+  const [maxTokens,   setMaxTokens]   = useState(1024);
+  const [showParams,  setShowParams]  = useState(false);
+  const [allVars,     setAllVars]     = useState(() => {
+    const s = extractVariables(data?.systemPrompt || '');
+    const u = extractVariables(data?.userQuery    || '');
+    return [...new Map([...s, ...u].map(v => [v, v])).values()];
+  });
 
+  const updateNodeInternals = useUpdateNodeInternals();
   const updateNodeField = useStore(state => state.updateNodeField);
-  const onEdgesChange   = useStore(state => state.onEdgesChange);
-  const edges           = useStore(state => state.edges);
 
-  const systemVars = extractVariables(systemPrompt);
-  const userVars   = extractVariables(userQuery);
-  const allVars    = [...new Map([...systemVars, ...userVars].map(v => [v, v])).values()];
+  const onEdgesChange = useStore(state => state.onEdgesChange);
+  const edges         = useStore(state => state.edges);
+
+  const rebuildAllVars = (sPrompt, uQuery) => {
+    const s = extractVariables(sPrompt);
+    const u = extractVariables(uQuery);
+    setAllVars([...new Map([...s, ...u].map(v => [v, v])).values()]);
+  };
 
   useStaleEdgeRemoval(id, allVars, edges, onEdgesChange);
 
-  const handleSystemChange = (val) => { setSystemPrompt(val); updateNodeField(id, 'systemPrompt', val); };
-  const handleUserChange   = (val) => { setUserQuery(val);    updateNodeField(id, 'userQuery',    val); };
+  useEffect(() => {
+    updateNodeInternals(id);
+  }, [allVars]);
+
+  const handleSystemChange = (val) => {
+    rebuildAllVars(val, data?.userQuery || '');
+    updateNodeField(id, 'systemPrompt', val);
+  };
+
+  const handleUserChange = (val) => {
+    rebuildAllVars(data?.systemPrompt || '', val);
+    updateNodeField(id, 'userQuery', val);
+  };
 
   return (
-    <NodeTemplate title={sel ? `LLM · ${sel.label}` : 'LLM'} icon={sel?.short || '◈'}
+    <NodeTemplate id={id} title={sel ? `LLM · ${sel.label}` : 'LLM'} icon={sel?.short || '◈'}
       category="AI" accentColor={color} fields={[]}
-      handles={[{ type: 'source', position: Position.Right, id: `${id}-response` }]}
-      minWidth={320}>
+      handles={[
+        { type: 'source', position: Position.Right, id: `${id}-response` },
+        { type: 'target', position: Position.Left,  id: `${id}-input`, style: { top: '15%' } },
+      ]}
+      minWidth={320} style={{ overflow: 'visible' }}>
 
       {/* Model selector */}
       <div className="flex flex-col gap-1.5">
@@ -92,21 +113,15 @@ export const LLMNode = ({ id, data }) => {
 
       <div className="h-px bg-border" />
 
-      <VariableTextField
-        label="System Prompt"
-        value={systemPrompt}
+      <VariableTextField label="System Prompt" value={data?.systemPrompt || ''}
         onChange={handleSystemChange}
         placeholder="You are a helpful assistant... type {{ to insert an input"
-        color={color}
-      />
+        color={color} nodeId={id} />
 
-      <VariableTextField
-        label="User Query"
-        value={userQuery}
+      <VariableTextField label="User Query" value={data?.userQuery || ''}
         onChange={handleUserChange}
         placeholder="Answer this question... type {{ to insert an input"
-        color={color}
-      />
+        color={color} nodeId={id} />
 
       <VariableHandles nodeId={id} vars={allVars} color={color} />
 

@@ -64,6 +64,7 @@ export const SupabaseNode = ({ id, data }) => {
 
   return (
     <NodeTemplate
+      id={id}
       title="Supabase"
       icon="S"
       category="Data"

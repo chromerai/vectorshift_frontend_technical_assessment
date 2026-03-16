@@ -37,6 +37,7 @@ export const OutputNode = ({ id, data }) => {
 
   return (
     <NodeTemplate
+      id={id}
       title="Output"
       icon="⬆"
       category="I/O"

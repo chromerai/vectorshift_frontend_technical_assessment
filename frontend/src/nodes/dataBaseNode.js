@@ -102,6 +102,7 @@ export const DatabaseNode = ({ id, data }) => {
 
   return (
     <NodeTemplate
+      id={id}
       title="Database"
       icon="⊞"
       category="Storage"

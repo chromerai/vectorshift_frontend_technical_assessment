@@ -147,6 +147,7 @@ const FieldRenderer = ({ field }) => {
  *  className    — extra Tailwind classes on the outer wrapper
  */
 export const NodeTemplate = ({
+  id,
   title,
   category,
   accentColor = '#6366f1',
@@ -156,6 +157,7 @@ export const NodeTemplate = ({
   children,
   minWidth = 220,
   className = '',
+  style = {},
 }) => {
   // Derive soft tint from accentColor for header background
   const headerBg   = `${accentColor}14`;
@@ -174,7 +176,7 @@ export const NodeTemplate = ({
   return (
     <div
       className={cn('node-base', className)}
-      style={{ minWidth: `${minWidth}px` }}
+      style={{ minWidth: `${minWidth}px`, ...style }}
       onKeyDown={e => e.stopPropagation()}
     >
       {/* ── Header ── */}
@@ -192,6 +194,11 @@ export const NodeTemplate = ({
             style={{ background: badgeBg, color: badgeText }}
           >
             {category}
+          </span>
+        )}
+        {id && (
+          <span className="text-[8px] font-mono text-muted/50 ml-1">
+            {id}
           </span>
         )}
       </div>
