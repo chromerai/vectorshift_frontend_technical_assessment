@@ -38,8 +38,8 @@ export const LLMNode = ({ id, data }) => {
 
   useStaleEdgeRemoval(id, allVars, edges, onEdgesChange);
 
-  const handleSystemChange = (e) => { setSystemPrompt(e.target.value); updateNodeField(id, 'systemPrompt', e.target.value); };
-  const handleUserChange   = (e) => { setUserQuery(e.target.value);    updateNodeField(id, 'userQuery',    e.target.value); };
+  const handleSystemChange = (val) => { setSystemPrompt(val); updateNodeField(id, 'systemPrompt', val); };
+  const handleUserChange   = (val) => { setUserQuery(val);    updateNodeField(id, 'userQuery',    val); };
 
   return (
     <NodeTemplate title={sel ? `LLM · ${sel.label}` : 'LLM'} icon={sel?.short || '◈'}
@@ -73,7 +73,8 @@ export const LLMNode = ({ id, data }) => {
                 <span className="field-label mb-0">Temperature</span>
                 <span className="text-[10px] font-mono" style={{ color }}>{temperature}</span>
               </div>
-              <input type="number" value={temperature} onChange={e => setTemperature(parseFloat(e.target.value))}
+              <input type="number" value={temperature}
+                onChange={e => setTemperature(parseFloat(e.target.value))}
                 min="0" max="2" step="0.1" className="field-input text-xs font-mono" />
             </label>
             <label className="flex flex-col gap-1 flex-1">
@@ -81,7 +82,8 @@ export const LLMNode = ({ id, data }) => {
                 <span className="field-label mb-0">Max Tokens</span>
                 <span className="text-[10px] font-mono" style={{ color }}>{maxTokens}</span>
               </div>
-              <input type="number" value={maxTokens} onChange={e => setMaxTokens(parseInt(e.target.value))}
+              <input type="number" value={maxTokens}
+                onChange={e => setMaxTokens(parseInt(e.target.value))}
                 min="256" max="8192" step="256" className="field-input text-xs font-mono" />
             </label>
           </div>
@@ -90,11 +92,21 @@ export const LLMNode = ({ id, data }) => {
 
       <div className="h-px bg-border" />
 
-      <VariableTextField label="System Prompt" value={systemPrompt} onChange={handleSystemChange}
-        placeholder="You are a helpful assistant. {{context}}" vars={systemVars} color={color} />
+      <VariableTextField
+        label="System Prompt"
+        value={systemPrompt}
+        onChange={handleSystemChange}
+        placeholder="You are a helpful assistant... type {{ to insert an input"
+        color={color}
+      />
 
-      <VariableTextField label="User Query" value={userQuery} onChange={handleUserChange}
-        placeholder="Answer this: {{user_input}}" vars={userVars} color={color} />
+      <VariableTextField
+        label="User Query"
+        value={userQuery}
+        onChange={handleUserChange}
+        placeholder="Answer this question... type {{ to insert an input"
+        color={color}
+      />
 
       <VariableHandles nodeId={id} vars={allVars} color={color} />
 
