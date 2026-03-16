@@ -66,7 +66,6 @@ The pipeline builder lets you connect nodes together to define how data flows th
 │   └── package.json
 └── backend/
     ├── main.py
-    └── requirements.txt
 ```
 
 ---
