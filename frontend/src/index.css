@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: #0f1117;
+    color: #e2e5f1;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .react-flow__edge-path {
+    stroke: #6366f1;
+    stroke-width: 2;
+  }
+
+  .react-flow__edge.selected .react-flow__edge-path {
+    stroke: #f43f5e !important;
+    stroke-width: 3 !important;
+  }
+
+  .react-flow__controls {
+    background: #1a1d27 !important;
+    border: 1px solid #2e3250 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
+  }
+
+  .react-flow__controls-button {
+    background: #1a1d27 !important;
+    border-bottom: 1px solid #2e3250 !important;
+    color: #9ca3c8 !important;
+    fill: #9ca3c8 !important;
+  }
+
+  .react-flow__controls-button:hover {
+    background: #21253a !important;
+    fill: #e2e5f1 !important;
+  }
+
+  .react-flow__minimap {
+    background: #1a1d27 !important;
+    border: 1px solid #2e3250 !important;
+    border-radius: 10px !important;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2e3250; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #4b5280; }
+}
+
+@layer components {
+  .node-base {
+    @apply rounded-xl border border-border bg-surface shadow-node animate-fade-in;
+    min-width: 220px;
+  }
+
+  .node-header {
+    @apply flex items-center justify-between px-3 py-2 rounded-t-xl border-b border-border;
+  }
+
+  .node-title {
+    @apply flex items-center gap-2 text-sm font-semibold text-white;
+  }
+
+  .node-badge {
+    @apply text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full;
+  }
+
+  .node-body {
+    @apply flex flex-col gap-2 p-3;
+  }
+
+  .field-label {
+    @apply text-[10px] font-semibold uppercase tracking-wider text-muted mb-1 block;
+  }
+
+  .field-input {
+    @apply w-full bg-canvas border border-border rounded-lg px-2.5 py-1.5 text-xs text-white
+           placeholder-muted outline-none transition-all duration-150
+           focus:border-accent focus:ring-1 focus:ring-accent/30;
+  }
+
+  .field-select {
+    @apply field-input cursor-pointer;
+  }
+
+  .field-textarea {
+    @apply field-input resize-none leading-5 overflow-hidden;
+    min-height: 28px;
+  }
+
+  .var-chip {
+    @apply text-[9px] font-bold px-2 py-0.5 rounded-full border font-mono;
+  }
+}
