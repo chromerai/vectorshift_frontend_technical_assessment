@@ -12,7 +12,7 @@ const ALL_NODES = [
   { type: 'text',         label: 'Text',      icon: '✦', accentColor: '#3b82f6', category: 'Start'},
   { type: 'note',         label: 'Note',      icon: '◎', accentColor: '#facc15', category: 'Start'},
   // AI — one entry per provider, all map to the same 'llm' node type but carry a defaultProvider
-  { type: 'llm', defaultProvider: 'openai',    label: 'OpenAI',    icon: 'O', accentColor: '#10b981'},
+  { type: 'llm', defaultProvider: 'openai',    label: 'OpenAI',    icon: 'O', accentColor: '#10b981', category: 'AI'},
   { type: 'llm', defaultProvider: 'anthropic', label: 'Anthropic', icon: 'A', accentColor: '#f59e0b', category: 'AI'},
   { type: 'llm', defaultProvider: 'google',    label: 'Google',    icon: 'G', accentColor: '#3b82f6', category: 'AI'},
   { type: 'llm', defaultProvider: 'xai',       label: 'xAI',       icon: 'X', accentColor: '#a855f7', category: 'AI'},

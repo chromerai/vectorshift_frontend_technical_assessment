@@ -39,12 +39,14 @@ export const TimerNode = ({ id, data }) => {
     },
     {
       id: 'retries',
-      type: 'range',
+      type: 'number',
       label: 'Max Retries',
       value: retries,
       onChange: (e) => setRetries(Number(e.target.value)),
       min: 0,
       max: 10,
+      step: 1,
+      onMouseDown: (e) => e.stopPropagation()
     },
   ];
 

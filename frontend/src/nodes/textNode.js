@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Handle, Position } from 'reactflow';
 import { NodeTemplate } from './nodeTemplate';
 import { useStore } from '../store';
-import { cn } from '../lib/utils';
+import { cn, useStaleEdgeRemoval } from '../lib/utils';
 
 const MIN_WIDTH  = 220;
 const MIN_HEIGHT = 100;
@@ -32,19 +32,7 @@ export const TextNode = ({ id, data }) => {
   const newVars     = variables.filter(v => !prevVars.includes(v));
 
   // ── Auto-remove stale edges when variables change ──────────────────────────
-  useEffect(() => {
-    const currentHandleIds = variables.map(v => `${id}-${v}`);
-
-    const staleEdges = edges.filter(e =>
-      e.target === id &&
-      e.targetHandle &&
-      !currentHandleIds.includes(e.targetHandle)
-    );
-
-    if (staleEdges.length > 0) {
-      onEdgesChange(staleEdges.map(e => ({ type: 'remove', id: e.id })));
-    }
-  }, [variables.join(',')]);
+  useStaleEdgeRemoval(id, variables, edges, onEdgesChange);
 
   // ── Resize ─────────────────────────────────────────────────────────────────
   const recalcSize = useCallback(() => {

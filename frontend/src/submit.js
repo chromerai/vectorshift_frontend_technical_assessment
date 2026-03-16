@@ -3,7 +3,7 @@ import { useStore } from './store';
 import { PipelineResult } from './pipeLineResult';
 import { shallow } from 'zustand/shallow';
 import { useState, useMemo } from 'react';
-import { cn } from './lib/utils';
+import { cn, validateVariables } from './lib/utils';
 
 const selector = (state) => ({
   nodes: state.nodes,
@@ -264,51 +264,34 @@ export const SubmitButton = () => {
 
   // ── Validation ──────────────────────────────────────────────────────────────
   const validationErrors = useMemo(() => {
-  const errors = [];
-  const textNodes = nodes.filter(n => n.type === 'text');
+    const errors = [];
 
-  textNodes.forEach(node => {
-    const text       = node.data?.text || '';
-    const vars       = [...text.matchAll(/\{\{(\w+)\}\}/g)].map(m => m[1]);
-    const uniqueVars = [...new Set(vars)];
-
-    uniqueVars.forEach(varName => {
-      const expectedHandle = `${node.id}-${varName}`;
-      const connectedEdge  = edges.find(
-        e => e.target === node.id && e.targetHandle === expectedHandle
-      );
-
-      if (!connectedEdge) {
-        errors.push({ nodeId: node.id, variable: varName,
-          reason: `No input node connected to {{${varName}}}` });
-        return;
-      }
-
-      const sourceNode = nodes.find(n => n.id === connectedEdge.source);
-      if (!sourceNode || sourceNode.type !== 'customInput') {
-        errors.push({ nodeId: node.id, variable: varName,
-          reason: `{{${varName}}} must be connected to an Input node` });
-        return;
-      }
-
-      const inputName = sourceNode.data?.inputName
-        || sourceNode.id.replace('customInput-', 'input_');
-
-      if (inputName !== varName) {
-        errors.push({ nodeId: node.id, variable: varName,
-          reason: `Input node is named "${inputName}" but must be named "${varName}"` });
-      }
+    // Text nodes
+    nodes.filter(n => n.type === 'text').forEach(node => {
+      errors.push(...validateVariables(
+        node.id,
+        [node.data?.text || ''],
+        edges, nodes,
+        'Text node'
+      ));
     });
-  });
 
-  return errors;
-}, [nodes, edges]);
+    // LLM nodes
+    nodes.filter(n => n.type === 'llm').forEach(node => {
+      errors.push(...validateVariables(
+        node.id,
+        [node.data?.systemPrompt || '', node.data?.userQuery || ''],
+        edges, nodes,
+        'LLM node'
+      ));
+    });
+
+    return errors;
+  }, [nodes, edges]);
 
   // ── Open modal ──────────────────────────────────────────────────────────────
   const handleButtonClick = () => {
   if (nodes.length === 0) return;
-  console.log('edges:', JSON.stringify(edges, null, 2));
-  console.log('text nodes:', nodes.filter(n => n.type === 'text').map(n => n.data));
   setShowModal(true);
 };
 

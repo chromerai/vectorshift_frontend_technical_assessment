@@ -198,7 +198,7 @@ export const NodeTemplate = ({
 
       {/* ── Body ── */}
       {(fields.length > 0 || children) && (
-        <div className="node-body">
+        <div className="node-body nodrag">
           {fields.map((field, i) => (
             <FieldRenderer key={field.id || i} field={field} />
           ))}
