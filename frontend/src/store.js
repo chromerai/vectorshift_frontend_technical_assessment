@@ -36,8 +36,24 @@ export const useStore = create((set, get) => ({
       });
     },
     onConnect: (connection) => {
+      console.log("connection: " +  JSON.stringify(connection))
+
+      const sourceNode = get().nodes.find(n => n.id === connection.source);
+      const targetNode = get().nodes.find(n => n.id === connection.target);
+      const isVar = connection.data?.isVariableEdge;
+      
+      if (sourceNode?.type === 'customInput' && 
+          !isVar &&
+          (targetNode?.type === 'text' || targetNode?.type === 'llm')) return;
       set({
-        edges: addEdge({...connection, type: 'smoothstep', animated: true, markerEnd: {type: MarkerType.Arrow, height: '20px', width: '20px'}}, get().edges),
+        edges: addEdge({
+          ...connection,
+          type:      isVar ? 'default' : 'smoothstep',  // curved for var, smoothstep for others
+          animated:  isVar ? false : true,               // solid for var, dashed for others
+          deletable: isVar ? false : true,
+          style:     isVar ? { stroke: connection.style?.stroke || '#6366f1', strokeWidth: 2 } : { stroke: '#818cf8', strokeWidth: 2 },
+          markerEnd: { type: MarkerType.Arrow, height: '20px', width: '20px' }
+        }, get().edges),
       });
     },
     updateNodeField: (nodeId, fieldName, fieldValue) => {

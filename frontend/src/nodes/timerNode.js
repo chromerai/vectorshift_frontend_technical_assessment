@@ -57,6 +57,7 @@ export const TimerNode = ({ id, data }) => {
 
   return (
     <NodeTemplate
+      id={id}
       title="Timer"
       icon="◷"
       category="Control"

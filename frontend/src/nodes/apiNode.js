@@ -54,6 +54,7 @@ export const APINode = ({ id, data }) => {
 
   return (
     <NodeTemplate
+      id={id}
       title="API Call"
       icon="⊕"
       category="Network"

@@ -1,23 +1,24 @@
 // inputNode.js
+// nodes/inputNode.js
 import { useState } from 'react';
 import { Position } from 'reactflow';
 import { NodeTemplate } from './nodeTemplate';
 import { useStore } from '../store';
 
 export const InputNode = ({ id, data }) => {
-  const [currName,   setCurrName]   = useState(data?.inputName || id.replace('customInput-', 'input_'));
-  const [inputType,  setInputType]  = useState(data?.inputType || 'Text');
+  // id-based identifier — never changes, used for handles + validation
+  const inputId = id.replace('customInput-', 'input_');
+
+  // display name — user can change freely, purely cosmetic
+  const [name,        setName]        = useState(data?.name        || inputId);
+  const [inputType,   setInputType]   = useState(data?.inputType   || 'Text');
   const [description, setDescription] = useState(data?.description || '');
 
   const updateNodeField = useStore(state => state.updateNodeField);
 
   const TYPE_ICONS = {
-    Text:   '✦',
-    File:   '⊞',
-    Image:  '◫',
-    Audio:  '◉',
-    Number: '#',
-    Boolean:'⊙',
+    Text: '✦', File: '⊞', Image: '◫',
+    Audio: '◉', Number: '#', Boolean: '⊙',
   };
 
   const fields = [
@@ -25,12 +26,12 @@ export const InputNode = ({ id, data }) => {
       id: 'name',
       type: 'text',
       label: 'Name',
-      value: currName,
+      value: name,
       onChange: (e) => {
-        setCurrName(e.target.value);
-        updateNodeField(id, 'inputName', e.target.value);
+        setName(e.target.value);
+        updateNodeField(id, 'name', e.target.value); // cosmetic only
       },
-      placeholder: 'input_name',
+      placeholder: inputId,
     },
     {
       id: 'description',
@@ -63,6 +64,7 @@ export const InputNode = ({ id, data }) => {
 
   return (
     <NodeTemplate
+      id={id}
       title="Input"
       icon="⬇"
       category="I/O"
@@ -71,13 +73,21 @@ export const InputNode = ({ id, data }) => {
       handles={handles}
       minWidth={230}
     >
-      {/* Type badge */}
+      {/* ID badge — always shows the stable input_N identifier */}
       <div className="flex items-center justify-between mt-1">
-        <span className="text-[9px] text-muted">Pass data of different types into your workflow</span>
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-          style={{ background: '#10b98120', color: '#10b981' }}>
-          {TYPE_ICONS[inputType]} {inputType}
+        <span className="text-[9px] text-muted">
+          Pass data of different types into your workflow
         </span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full"
+            style={{ background: '#10b98120', color: '#10b981' }}>
+            {inputId}
+          </span>
+          <span className="text-[9px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: '#10b98120', color: '#10b981' }}>
+            {TYPE_ICONS[inputType]} {inputType}
+          </span>
+        </div>
       </div>
     </NodeTemplate>
   );

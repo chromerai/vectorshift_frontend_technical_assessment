@@ -78,7 +78,17 @@ export const SubmitButton = () => {
         </div>
 
         {/* Run button */}
-        <button onClick={() => nodes.length > 0 && setShowModal(true)} disabled={nodes.length === 0}
+        <button onClick={() => {
+                                  if (nodes.length === 0) return;
+                                  console.log('edges:', edges.map(e => ({
+                                    source: e.source,
+                                    target: e.target,
+                                    targetHandle: e.targetHandle,
+                                    sourceHandle: e.sourceHandle
+                                  })));
+                                  setShowModal(true);
+                                }} 
+          disabled={nodes.length === 0}
           className={cn('flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold text-white tracking-wide transition-all duration-150',
             validationErrors.length > 0 ? 'bg-rose-500 hover:bg-rose-600' : 'bg-accent hover:bg-accent-dark hover:shadow-glow',
             'hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]',

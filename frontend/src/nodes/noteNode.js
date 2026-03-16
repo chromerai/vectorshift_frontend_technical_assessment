@@ -27,6 +27,7 @@ export const NoteNode = ({ id, data }) => {
 
   return (
     <NodeTemplate
+      id={id}
       title="Note"
       icon="◎"
       category="Util"
