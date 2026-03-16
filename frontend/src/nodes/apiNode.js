@@ -1,7 +1,7 @@
 // nodes/apiNode.js
 import { useState } from 'react';
 import { Position } from 'reactflow';
-import { NodeTemplate } from './nodeTemplate'
+import { NodeTemplate } from './nodeTemplate';
 
 export const APINode = ({ id, data }) => {
   const [url,      setUrl]      = useState(data?.url      || '');
@@ -62,5 +62,5 @@ export const APINode = ({ id, data }) => {
       handles={handles}
       minWidth={240}
     />
-  )
+  );
 };
